@@ -8,7 +8,8 @@ namespace rabbit
     {
         private const string DefaultEndpoint = "http://localhost:4001";
         private const string DefaultWatchFolder = "./";
-        static void Main(string[] args)
+
+        private static void Main(string[] args)
         {
             var endpoint = DefaultEndpoint;
             var watchFolder = new DirectoryInfo(DefaultWatchFolder).FullName;
@@ -23,9 +24,25 @@ namespace rabbit
 
             var asm = Assembly.GetExecutingAssembly();
             var location = new FileInfo(asm.Location).Directory.FullName;
-            var host = new NancyAutoHost(endpoint, watchFolder, location);
+            var host = new ShellLauncher(endpoint, watchFolder, location);
             host.AutoRun();
-            Console.Read();
+
+            Console.WriteLine("Press enter to quit. Or press 'D' then enter to start a new shell in debug mode.");
+
+            while (true)
+            {
+                var read = Console.ReadLine();
+                if (read == "D" || read == "d")
+                {
+                    host.RestartInDebugMode();
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            host.Dispose();
         }
     }
 }
